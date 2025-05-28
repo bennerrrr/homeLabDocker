@@ -1,0 +1,102 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  snmp-exporter:
+    image: prom/snmp-exporter:latest
+    container_name: snmp-exporter
+    restart: unless-stopped
+    ports:
+      - "9116:9116"
+    volumes:
+      - ./snmp.yml:/etc/snmp_exporter/snmp.yml:ro
+
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - suricata-logs:/var/log/suricata
+    command: -i eth0
+    environment:
+      - TZ=UTC
+
+  netdata:
+    image: netdata/netdata:latest
+    container_name: netdata
+    restart: unless-stopped
+    ports:
+      - "19999:19999"
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - netdata-data:/var/lib/netdata
+      - netdata-config:/etc/netdata
+      - netdata-cache:/var/cache/netdata
+
+  speedtest-tracker:
+    image: henrywhitaker3/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    restart: unless-stopped
+    ports:
+      - "8765:80"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - speedtest-data:/config
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3002:3001"
+    volumes:
+      - uptime-kuma-data:/app/data
+
+  syslog-ng:
+    image: balabit/syslog-ng:latest
+    container_name: syslog-ng
+    restart: unless-stopped
+    ports:
+      - "514:514/udp"
+      - "601:601/tcp"
+    volumes:
+      - syslog-ng-data:/var/log/syslog-ng
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  suricata-logs:
+  netdata-data:
+  netdata-config:
+  netdata-cache:
+  speedtest-data:
+  uptime-kuma-data:
+  syslog-ng-data:
