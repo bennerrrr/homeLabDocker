@@ -75,17 +75,21 @@ services:
       - netdata-cache:/var/cache/netdata
 
   speedtest-tracker:
-    image: henrywhitaker3/speedtest-tracker:latest
-    container_name: speedtest-tracker
+    image: lscr.io/linuxserver/speedtest-tracker:latest
     restart: unless-stopped
+    container_name: speedtest-tracker
     ports:
-      - "8765:80"
+      - 8080:80
+      - 8443:443
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - APP_KEY=
+      - DB_CONNECTION=sqlite
     volumes:
-      - speedtest-data:/config
+      - /path/to/data:/config
+      - /path/to-custom-ssl-keys:/config/keys
+      
 
   uptime-kuma:
     image: louislam/uptime-kuma:latest
