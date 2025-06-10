@@ -1,0 +1,55 @@
+# path to data
+  
+# /home/ben/docker/data/
+#
+#
+
+  
+  
+  
+  services:
+    sonarr:
+      image: lscr.io/linuxserver/sonarr:latest
+      container_name: sonarr
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Etc/UTC
+      volumes:
+        - /path/to/sonarr/data:/config
+        - /path/to/tvseries:/tv #optional
+        - /path/to/downloadclient-downloads:/downloads #optional
+      ports:
+        - 8989:8989
+      restart: unless-stopped
+
+    radarr:
+      image: lscr.io/linuxserver/sonarr:latest
+      container_name: sonarr
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Etc/UTC
+      volumes:
+        - /path/to/sonarr/data:/config
+        - /path/to/tvseries:/tv #optional
+        - /path/to/downloadclient-downloads:/downloads #optional
+      ports:
+        - 8989:8989
+      restart: unless-stopped
+
+    prowlarr:
+      prowlarr:
+      image: lscr.io/linuxserver/prowlarr:latest
+      container_name: prowlarr
+      environment:
+        - PUID=1000
+        - PGID=1000
+        - TZ=Etc/UTC
+      volumes:
+        - /path/to/prowlarr/data:/config
+      ports:
+        - 9696:9696
+      restart: unless-stopped
+
+    
